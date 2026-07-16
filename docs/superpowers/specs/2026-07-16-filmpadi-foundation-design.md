@@ -1,12 +1,12 @@
-# Orban Forest — Foundation Phase Design (Weeks 1–2)
+# FilmPadi — Foundation Phase Design (Weeks 1–2)
 
 **Date:** 2026-07-16
-**Source:** [v1 Technical Brief](../../orban-forest-v1-technical-brief.md) (Weeks 1–2 of the build sequence)
+**Source:** [v1 Technical Brief](../../orban-forest-v1-technical-brief.md) (Weeks 1–2 of the build sequence; "Orban Forest" was the working codename — the product is FilmPadi)
 **Status:** Approved design, pending implementation plan
 
 ## Context and scope
 
-Orban Forest v1 is a web-based Nollywood discovery platform: metadata only, never film files. The full v1 is an 8-week build; this spec covers the **foundation phase** — the brief's Weeks 1–2:
+FilmPadi v1 is a web-based Nollywood discovery platform: metadata only, never film files. The full v1 is an 8-week build; this spec covers the **foundation phase** — the brief's Weeks 1–2:
 
 - Repo, Drizzle schema + migrations, auth (phone OTP + Google), base layout
 - Film/person/producer pages, search, where-to-watch links, `/out` click tracking, SEO scaffolding
@@ -16,7 +16,7 @@ Later phases (ingestion, social, trending, producer studio, campaigns, moderatio
 **Engagement decisions already made:**
 
 - **Local-first development.** No external services are provisioned yet. Every vendor sits behind an adapter interface with a dev implementation; provisioning Neon/Termii/R2/Vercel later is configuration, not code.
-- **Repo lives at `~/projects/orban-forest`** (WSL ext4 — `/mnt/e` is too slow for Node tooling). The original brief is copied into `docs/`.
+- **Repo lives at `~/projects/filmpadi`** (WSL ext4 — `/mnt/e` is too slow for Node tooling), pushed to `github.com/NomadonaTrip/filmpadi`. The original brief is copied into `docs/`.
 - **Custom auth** (sessions table + hand-rolled OTP + Arctic for Google), not Auth.js or a hosted provider.
 - **Local Postgres 16 via apt**, not Docker (unavailable in this WSL distro) or PGlite (parity risk).
 - **Visual direction established by Claude** (§6 below), judged by the founder on real screens during build.
@@ -69,7 +69,7 @@ src/
 - `youtube_channels` (id, channel_id, name, added_at) — named in brief §5/P2 but missing from its DDL; included now so Week 3 needs no migration.
 - Films FTS: generated `tsvector` column over title + synopsis with GIN index, plus the `pg_trgm` extension and a trigram index on title for typo tolerance.
 
-**Local database:** Postgres 16 installed via apt in WSL. `DATABASE_URL` in `.env.local`. Separate `orban_forest_test` database for integration tests (schema pushed per run). Swapping to Neon later is a connection-string change.
+**Local database:** Postgres 16 installed via apt in WSL. `DATABASE_URL` in `.env.local`. Separate `filmpadi_test` database for integration tests (schema pushed per run). Swapping to Neon later is a connection-string change.
 
 **Seed data:** `pnpm db:seed` loads ~50 realistic Nollywood films (real public-knowledge titles and people, varied genres/languages/years), with a deliberate mix of link states — YouTube links, Netflix links, cinema-only, and some with **zero** film_links (the brief treats link absence as demand signal). Includes a handful of people and producers so `/person` and `/producer` pages render.
 
@@ -140,7 +140,7 @@ Custom, phone-OTP-first (brief §9), no auth framework.
 Dark cinematic, poster-forward, mobile-first:
 
 - **Ground:** near-black warm charcoal (not pure black), with poster art acting as the interface's primary color. OLED-friendly and data-light.
-- **Accent:** one saturated forest-green family for interactive elements (nod to the name).
+- **Accent:** one saturated green family for interactive elements (Nigeria's color — still the right accent now that the name is FilmPadi rather than the "forest" codename).
 - **Type:** single self-hosted variable font with strong display weights; subset aggressively (performance decision as much as aesthetic).
 - **Layout:** dense poster grids like a video shelf, not a text database. Designed at 360px width first; desktop is the adaptation (brief §3a).
 - Implemented as Tailwind design tokens, so direction changes are cheap. The founder judges on real screens during build; this is a starting direction, not a locked brand.
